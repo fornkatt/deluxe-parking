@@ -1,29 +1,16 @@
-﻿using System.Drawing;
-
-namespace DeluxeParking; 
-internal class Vehicle(string regNmbr, string color) {
-    public string RegNmbr { get; set; } = regNmbr;
-    public string Color { get; set; } = color;
-
-    internal virtual void Park() {
+﻿namespace DeluxeParking; 
+internal class Vehicle(string licenceNumber, string color, double parkingSpots) {
+    internal string LicenseNumber { get; init; } = licenceNumber;
+    internal string Color { get; init; } = color;
+    internal double ParkingSpots { get; } = parkingSpots;
 
     }
-}
-internal class Car(string regNmbr, string color, bool isElectric) : Vehicle(regNmbr, color) {
-    public bool IsElectric { get; set; } = isElectric;
-
-    internal override void Park() { 
+internal class Car(string licenceNumber, string color, bool isElectric) : Vehicle(licenceNumber, color, 1.0) {
+    internal bool IsElectric { get; init; } = isElectric;
     }
-}
-internal class Motorcycle(string regNmbr, string color, string brand) : Vehicle(regNmbr, color) {
-    public string Brand { get; set; } = brand;
-
-    internal override void Park() { 
+internal class Motorcycle(string licenceNumber, string color, string brand) : Vehicle(licenceNumber, color, 0.5) {
+    internal string Brand { get; init; } = brand;
     }
-}
-internal class Bus(string regNmbr, string color, int maxPassangers) : Vehicle(regNmbr, color) {
-    public int MaxPassangers { get; set; } = maxPassangers;
-
-    internal override void Park() { 
+internal class Bus(string licenceNumber, string color, int maxPassangers) : Vehicle(licenceNumber, color, 2.0) {
+    internal int MaxPassangers { get; init; } = maxPassangers;
     }
-}
