@@ -3,87 +3,56 @@
 namespace DeluxeParking;
 
 internal class VehicleHelpers {
-    private static readonly ImmutableArray<string> _vehicleBrand =
-        ["Honda", "Yamaha", "Harley-Davidson", "Kawasaki",
-         "Suzuki", "BMW", "Royal Enfield", "Benelli"];
+    //private static readonly ImmutableArray<string> _vehicleBrand =
+    //    ["Honda", "Yamaha", "Harley-Davidson", "Kawasaki",
+    //     "Suzuki", "BMW", "Royal Enfield", "Benelli"];
+
+    //private static readonly ImmutableArray<string> _vehicleColors =
+    //    ["Vit", "Svart", "Grå", "Silver", "Röd", "Blå", "Brun", "Grön",
+    //     "Beige", "Orange", "Guld", "Gul", "Lila", "Marinblå", "Vinröd"];
 
     private static readonly ImmutableArray<char> _licenseLetters =
         ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
          'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 
-    private static readonly ImmutableArray<string> _vehicleColors =
-        ["Vit", "Svart", "Grå", "Silver", "Röd", "Blå", "Brun", "Grön",
-         "Beige", "Orange", "Guld", "Gul", "Lila", "Marinblå", "Vinröd"];
+    private static readonly int _licenseLettersLength = _licenseLetters.Length;
+    private const int _LICENSE_PLATE_LENGTH = 6;
 
-    //private static string GetRandomBrand() {
-    //    return _vehicleBrand[Random.Shared.Next(_vehicleBrand.Length)];
-    //}
-    //private static string GetRandomColor() {
-    //    return _vehicleColors[Random.Shared.Next(_vehicleColors.Length)];
-    //}
-    internal static Vehicle GenerateNewVehicle() {
-        int randomVehicle = Random.Shared.Next(3);
-        Vehicle vehicle;
+    internal static Car GenerateCar() {
+        string descriptionHeader = "En ny bil anländer till parkeringen.\n";
 
-        if (randomVehicle == 0) {
-            vehicle = GenerateCar();
-        }
-        else if (randomVehicle == 1) {
-            vehicle = GenerateMotorcycle();
-        }
-        else {
-            vehicle = GenerateBus();
-        }
-
-        return vehicle;
-    }
-    private static Car GenerateCar() {
-        string color;
-        bool isElectric;
-        string header = "En ny bil anländer till parkeringen.\n";
-
-        color = GetColor(header);
+        string color = GetColor(descriptionHeader);
         Console.Clear();
-        isElectric = CheckIfElectricCar(header);
+        bool isElectric = CheckIfElectricCar(descriptionHeader);
 
-        var car = new Car(GenerateRandomLicenseNumber(), color, isElectric);
-
-        return car;
+        return new Car(GenerateRandomLicenseNumber(), color, isElectric);
     }
-    private static Motorcycle GenerateMotorcycle() {
-        string color;
-        string brand;
-        string header = "En ny motorcykel anländer till parkeringen.\n";
+    internal static Motorcycle GenerateMotorcycle() {
+        string descriptionHeader = "En ny motorcykel anländer till parkeringen.\n";
 
-        color = GetColor(header);
+        string color = GetColor(descriptionHeader);
         Console.Clear();
-        brand = GetBrand(header);
+        string brand = GetBrand(descriptionHeader);
 
-        var motorcycle = new Motorcycle(GenerateRandomLicenseNumber(), color, brand);
-
-        return motorcycle;
+        return new Motorcycle(GenerateRandomLicenseNumber(), color, brand);
     }
-    private static Bus GenerateBus() {
-        string color;
-        int maxPassengers;
-        string header = "En ny buss anländer till parkeringen.\n";
+    internal static Bus GenerateBus() {
+        string descriptionHeader = "En ny buss anländer till parkeringen.\n";
 
-        color = GetColor(header);
+        string color = GetColor(descriptionHeader);
         Console.Clear();
-        maxPassengers = TryConvertPassengerInput(header);
+        int maxPassengers = TryConvertPassengerInput(descriptionHeader);
 
-        var bus = new Bus(GenerateRandomLicenseNumber(), color, maxPassengers);
-
-        return bus;
+        return new Bus(GenerateRandomLicenseNumber(), color, maxPassengers);
     }
-    private static int TryConvertPassengerInput(string header) {
+    private static int TryConvertPassengerInput(string descriptionHeader) {
         string maxPassengers;
         int maxPassengersResult;
 
         while (true) {
-            maxPassengers = GetNumberOfPassengers(header);
+            maxPassengers = GetNumberOfPassengers(descriptionHeader);
             bool passengerResult = int.TryParse(maxPassengers, out maxPassengersResult);
-            if (!passengerResult || maxPassengersResult < 10) {
+            if (!passengerResult || maxPassengersResult < 7 || maxPassengersResult > 60) {
                 Console.WriteLine("Var god mata in ett giltigt värde");
                 Thread.Sleep(2000);
                 Console.Clear();
@@ -95,12 +64,49 @@ internal class VehicleHelpers {
         }
         return maxPassengersResult;
     }
-    private static string GetUserInput(string prompt, string header) {
+    private static string GetNumberOfPassengers(string descriptionHeader) {
+        return GetUserInput("Hur många passagerare får plats i bussen? Minst 7 personer och max 60. ", descriptionHeader);
+    }
+    private static string GetColor(string descriptionHeader) {
+        return GetUserInput("Vad är det för färg? ", descriptionHeader);
+    }
+    private static string GetBrand(string descriptionHeader) {
+        return GetUserInput("Vad är det för märke? ", descriptionHeader);
+    }
+    private static bool CheckIfElectricCar(string descriptionHeader) {
+        bool isElectric = false;
+        ConsoleKeyInfo choice;
+
+        bool chosen = false;
+        while (!chosen) {
+            Console.WriteLine(descriptionHeader);
+            Console.Write("Är bilen elektrisk? Y/n ");
+            choice = Console.ReadKey(true);
+
+            switch (choice.KeyChar) {
+                case 'y':
+                    isElectric = true;
+                    chosen = true;
+                    break;
+                case 'n':
+                    isElectric = false;
+                    chosen = true;
+                    break;
+                default:
+                    Console.WriteLine("Var god välj Y eller N.");
+                    Thread.Sleep(2000);
+                    Console.Clear();
+                    continue;
+            }
+        }
+        return isElectric;
+    }
+    private static string GetUserInput(string prompt, string descriptionHeader) {
         string? input;
 
         while (true) {
-            Console.WriteLine(header);
-            Console.WriteLine(prompt);
+            Console.WriteLine(descriptionHeader);
+            Console.Write(prompt);
             input = Console.ReadLine();
             if (input == null || input.Length <= 0) {
                 Console.WriteLine("Var god mata in ett värde.");
@@ -114,51 +120,13 @@ internal class VehicleHelpers {
         }
         return input;
     }
-    private static string GetNumberOfPassengers(string header) {
-        return GetUserInput("Hur många passagerare får plats i bussen? Minst 10 personer. ", header);
-    }
-    private static string GetColor(string header) {
-        return GetUserInput("Vad är det för färg? ", header);
-    }
-    private static string GetBrand(string header) {
-        return GetUserInput("Vad är det för märke? ", header);
-    }
-    private static bool CheckIfElectricCar(string header) {
-        bool isElectric = false;
-        bool running = true;
-        ConsoleKeyInfo choice;
-
-        while (running) {
-            Console.WriteLine(header);
-            Console.WriteLine("Är bilen elektrisk? Y/n ");
-            choice = Console.ReadKey(true);
-
-            switch (choice.KeyChar) {
-                case 'y':
-                    isElectric = true;
-                    running = false;
-                    break;
-                case 'n':
-                    isElectric = false;
-                    running = false;
-                    break;
-                default:
-                    Console.WriteLine("Var god välj Y eller N.");
-                    Thread.Sleep(2000);
-                    Console.Clear();
-                    continue;
-            }
-        }
-
-        return isElectric;
-    }
     private static string GenerateRandomLicenseNumber() {
         Span<char> licenseNumber = stackalloc char[6];
         bool lastSymbolIsLetter = Random.Shared.Next(2) == 0;
 
-        for (int i = 0; i < 6; i++) {
-            if (i == 5 && lastSymbolIsLetter || i < 3) {
-                licenseNumber[i] = _licenseLetters[Random.Shared.Next(_licenseLetters.Length)];
+        for (int i = 0; i < _LICENSE_PLATE_LENGTH; i++) {
+            if (i == _LICENSE_PLATE_LENGTH - 1 && lastSymbolIsLetter || i < 3) {
+                licenseNumber[i] = _licenseLetters[Random.Shared.Next(_LICENSE_PLATE_LENGTH)];
             }
             else {
                 licenseNumber[i] = (char)('0' + Random.Shared.Next(10));
@@ -166,4 +134,10 @@ internal class VehicleHelpers {
         }
         return new string(licenseNumber);
     }
+    //private static string GetRandomBrand() {
+    //    return _vehicleBrand[Random.Shared.Next(_vehicleBrand.Length)];
+    //}
+    //private static string GetRandomColor() {
+    //    return _vehicleColors[Random.Shared.Next(_vehicleColors.Length)];
+    //}
 }
