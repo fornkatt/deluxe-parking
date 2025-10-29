@@ -1,4 +1,5 @@
 ﻿namespace DeluxeParking;
+
 internal class Car(string licenseNumber, string color, bool isElectric) : IVehicle {
     public string LicenseNumber { get; init; } = licenseNumber;
     public string Color { get; init; } = color;

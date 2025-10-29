@@ -1,9 +1,11 @@
 ﻿namespace DeluxeParking;
 
 internal interface IParkingGarage {
-    double MaxParkingSpots { get; init; }
+    int MaxParkingSpots { get; init; }
     double OccupiedParkingSpots { get; set; }
+    List<IParkingMeter> ParkingMeters { get; set; }
     List<IVehicle> ParkedVehicles { get; set; }
-
-    IVehicle ParkVehicle();
+    SortedDictionary<int, List<IVehicle>> ParkingSpots { get; set; }
+    void ParkVehicle(IVehicle vehicle);
+    void CheckoutVehicle();
 }

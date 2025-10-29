@@ -18,8 +18,23 @@ internal class VehicleHelpers {
     private static readonly int _licenseLettersLength = _licenseLetters.Length;
     private const int _LICENSE_PLATE_LENGTH = 6;
 
-    internal static Car GenerateCar() {
-        string descriptionHeader = "En ny bil anländer till parkeringen.\n";
+    internal static IVehicle GenerateNewVehicle() {
+        int randomVehicle = Random.Shared.Next(3);
+        IVehicle vehicle;
+
+        if (randomVehicle == 0) {
+            vehicle = GenerateCar();
+        }
+        else if (randomVehicle == 1) {
+            vehicle = GenerateMotorcycle();
+        }
+        else {
+            vehicle = GenerateBus();
+        }
+        return vehicle;
+    }
+    private static Car GenerateCar() {
+        string descriptionHeader = "En ny bil anländer till parkeringen.";
 
         string color = GetColor(descriptionHeader);
         Console.Clear();
@@ -27,8 +42,8 @@ internal class VehicleHelpers {
 
         return new Car(GenerateRandomLicenseNumber(), color, isElectric);
     }
-    internal static Motorcycle GenerateMotorcycle() {
-        string descriptionHeader = "En ny motorcykel anländer till parkeringen.\n";
+    private static Motorcycle GenerateMotorcycle() {
+        string descriptionHeader = "En ny motorcykel anländer till parkeringen.";
 
         string color = GetColor(descriptionHeader);
         Console.Clear();
@@ -36,24 +51,27 @@ internal class VehicleHelpers {
 
         return new Motorcycle(GenerateRandomLicenseNumber(), color, brand);
     }
-    internal static Bus GenerateBus() {
-        string descriptionHeader = "En ny buss anländer till parkeringen.\n";
+    private static Bus GenerateBus() {
+        string descriptionHeader = "En ny buss anländer till parkeringen.";
 
         string color = GetColor(descriptionHeader);
         Console.Clear();
-        int maxPassengers = TryConvertPassengerInput(descriptionHeader);
+        int maxPassengers = GetNumberOfPassengers(descriptionHeader);
 
         return new Bus(GenerateRandomLicenseNumber(), color, maxPassengers);
+    }
+    private static int GetNumberOfPassengers(string descriptionHeader) {
+        return TryConvertPassengerInput(descriptionHeader);
     }
     private static int TryConvertPassengerInput(string descriptionHeader) {
         string maxPassengers;
         int maxPassengersResult;
 
         while (true) {
-            maxPassengers = GetNumberOfPassengers(descriptionHeader);
+            maxPassengers = GetUserInput("Hur många passagerare får plats i bussen? Minst 7 personer och max 60: ", descriptionHeader);
             bool passengerResult = int.TryParse(maxPassengers, out maxPassengersResult);
             if (!passengerResult || maxPassengersResult < 7 || maxPassengersResult > 60) {
-                Console.WriteLine("Var god mata in ett giltigt värde");
+                Console.WriteLine("\nVar god mata in ett giltigt värde");
                 Thread.Sleep(2000);
                 Console.Clear();
                 continue;
@@ -63,9 +81,6 @@ internal class VehicleHelpers {
             }
         }
         return maxPassengersResult;
-    }
-    private static string GetNumberOfPassengers(string descriptionHeader) {
-        return GetUserInput("Hur många passagerare får plats i bussen? Minst 7 personer och max 60. ", descriptionHeader);
     }
     private static string GetColor(string descriptionHeader) {
         return GetUserInput("Vad är det för färg? ", descriptionHeader);
@@ -80,8 +95,9 @@ internal class VehicleHelpers {
         bool chosen = false;
         while (!chosen) {
             Console.WriteLine(descriptionHeader);
-            Console.Write("Är bilen elektrisk? Y/n ");
+            Console.Write("\nÄr bilen elektrisk? Y/n ");
             choice = Console.ReadKey(true);
+            Console.WriteLine();
 
             switch (choice.KeyChar) {
                 case 'y':
@@ -93,7 +109,7 @@ internal class VehicleHelpers {
                     chosen = true;
                     break;
                 default:
-                    Console.WriteLine("Var god välj Y eller N.");
+                    Console.WriteLine("\nVar god välj Y eller N.");
                     Thread.Sleep(2000);
                     Console.Clear();
                     continue;
@@ -105,7 +121,7 @@ internal class VehicleHelpers {
         string? input;
 
         while (true) {
-            Console.WriteLine(descriptionHeader);
+            Console.WriteLine($"{descriptionHeader}\n");
             Console.Write(prompt);
             input = Console.ReadLine();
             if (input == null || input.Length <= 0) {
