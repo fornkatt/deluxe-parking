@@ -1,49 +1,68 @@
-﻿namespace DeluxeParking;
+﻿using System.Text;
 
-internal class Info {
-    internal static void PrintHeader() {
-        Console.WriteLine("""
-                Välkommen till Deluxe Parkings parkeringssystem.
-                
-                    Som värdefull medarbetare hos oss uppmanar vi Er att vara extra aktsam och noggrant kontrollera så att inmatade uppgifter stämmer.
-                    Felinmatade uppgifter eller övrig misskötsel såsom överanvändning av raster och toalettbesök dras från nästkommande lön.
+namespace DeluxeParking;
 
-                    Vi hoppas Ni kommer trivas bra hos oss och ser fram emot våran tid tillsammans.
-                    Och glöm inte; Vi på Deluxe Parking sätter "Deluxe" i "Familj".
-                """);
-    }
-    internal static void PrintParkedVehicles(SortedDictionary<int, List<IVehicle>> parkingSpots) {
+internal class Info
+{
+    internal static string PrintParkedVehicles(SortedDictionary<int, List<IVehicle>> parkingSpots)
+    {
         HashSet<string> printedVehicles = [];
+        StringBuilder parkedVehiclesMessage = new();
 
-        foreach (var spot in parkingSpots) {
-            if (spot.Value.Count == 0) {
+        parkedVehiclesMessage.AppendLine("Parkerade fordon:");
+        parkedVehiclesMessage.AppendLine();
+
+        foreach (var spot in parkingSpots)
+        {
+            if (spot.Value.Count == 0)
+            {
                 continue;
             }
-            foreach (var vehicle in spot.Value) {
-                if (printedVehicles.Contains(vehicle.LicenseNumber)) {
+            foreach (var vehicle in spot.Value)
+            {
+                if (!printedVehicles.Add(vehicle.LicenseNumber))
+                {
                     continue;
                 }
 
-                if (vehicle is Car car) {
-                    Console.WriteLine($"Plats {spot.Key}\t\t\tBil\t\t{car.LicenseNumber}\t\t{car.Color}\t\t{(car.IsElectric ? "Elbil" : "Fossil")}");
-                }
-                else if (vehicle is Motorcycle motorcycle) {
-                    Console.WriteLine($"Plats {spot.Key}\t\t\tMC\t\t{motorcycle.LicenseNumber}\t\t{motorcycle.Color}\t\t{motorcycle.Brand}");
-                }
-                else if (vehicle is Bus bus) {
-                    Console.WriteLine($"Plats {spot.Key}-{spot.Key + 1}\t\tBuss\t\t{bus.LicenseNumber}\t\t{bus.Color}\t\t{bus.MaxPassangers}");
-                }
-                printedVehicles.Add(vehicle.LicenseNumber);
+                string spotLabel = vehicle is Bus ? $"{spot.Key}-{spot.Key + 1}" : spot.Key.ToString();
+
+                parkedVehiclesMessage.Append($"Plats {spotLabel,-15}");
+                parkedVehiclesMessage.Append(vehicle switch
+                {
+                    Car car => $"Bil\t{car.LicenseNumber,-15}{car.Color,-15}{(car.IsElectric ? "Elbil" : "Fossil")}",
+                    Motorcycle motorcycle => $"MC\t\t{motorcycle.LicenseNumber,-15}{motorcycle.Color,-15}{motorcycle.Brand}",
+                    Bus bus => $"Buss\t{bus.LicenseNumber,-15}{bus.Color,-15}{bus.MaxPassengers}",
+                    _ => $"Okänt fordon\t{vehicle.LicenseNumber,-15}{vehicle.Color}"
+                });
+                parkedVehiclesMessage.AppendLine();
             }
         }
+        return parkedVehiclesMessage.ToString();
     }
-    internal static void PrintDebugMenu(IParkingGarage parkingGarage) {
-        foreach (var meters in parkingGarage.ParkingMeters) {
-            meters.CalculateCost();
-            Console.WriteLine($"{meters.LicenseNumber}: {meters.MinutesParked} minuter, {meters.TotalParkingCost}kr");
-        }
+    internal static void PrintCheckoutMessage(IParkingMeter parkingMeterToCheckout, IVehicle vehicleToCheckout)
+    {
+        Console.Clear();
+        Console.WriteLine("Tack för att du valde Deluxe Parking!");
         Console.WriteLine();
-        Console.WriteLine($"Upptagna platser: {parkingGarage.OccupiedParkingSpots}");
+        Console.WriteLine($"Fordonet som checkades ut:\t{vehicleToCheckout.LicenseNumber}");
+        Console.WriteLine($"Total kostnad:\t\t\t{parkingMeterToCheckout.TotalParkingCost}kr");
+        Console.WriteLine();
+        Console.Write("Tryck på valfri tangent för att fortsätta.");
+        Console.ReadKey(true);
+    }
+    internal static void PrintDebugMenu(IParkingGarage parkingGarage)
+    {
+        StringBuilder debugText = new();
+
+        foreach (var meters in parkingGarage.ParkingMeters)
+        {
+            meters.CalculateTotalCost();
+            debugText.AppendLine($"{meters.LicenseNumber}: {meters.MinutesParked} minuter, {meters.TotalParkingCost}kr");
+        }
+        debugText.AppendLine();
+        debugText.AppendLine($"Upptagna platser: {parkingGarage.OccupiedParkingSpots}");
+        Console.WriteLine(debugText.ToString());
         Console.ReadKey(true);
     }
 }
