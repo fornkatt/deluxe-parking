@@ -12,10 +12,10 @@ internal class ParkingGarage(int maxParkingSpots) : IParkingGarage
     {
         IVehicle? newArrival = VehicleArrivals.GetNewVehicle();
 
-        if (newArrival == null || OccupiedParkingSpots + newArrival.RequiredParkingSpots > MaxParkingSpots)
+        if (newArrival == null || (OccupiedParkingSpots + newArrival.RequiredParkingSpots > MaxParkingSpots))
         {
             Console.WriteLine();
-            Console.WriteLine("Parkeringshuset är fullt.");
+            Console.WriteLine("Parkeringshuset kan inte ta emot detta fordon just nu.");
             return;
         }
 
@@ -39,11 +39,11 @@ internal class ParkingGarage(int maxParkingSpots) : IParkingGarage
         IVehicle? vehicleToCheckout = GetCheckoutObject(licenseNumber, ParkedVehicles);
         IParkingMeter? parkingMeterToCheckout = GetCheckoutObject(licenseNumber, ParkingMeters);
 
-        if (vehicleToCheckout == null || parkingMeterToCheckout == null || string.IsNullOrWhiteSpace(licenseNumber) || licenseNumber.Length > 6 || licenseNumber.Length <= 0)
+        if (vehicleToCheckout == null || parkingMeterToCheckout == null)
         {
             Console.WriteLine();
-            Console.WriteLine("Ogiltigt registreringsnummer.");
-            Thread.Sleep(2000);
+            Console.WriteLine("Fordonet hittades inte");
+            Thread.Sleep(GlobalConstants.UserFeedbackDelay);
             return;
         }
         parkingMeterToCheckout.CalculateTotalCost();
@@ -52,17 +52,22 @@ internal class ParkingGarage(int maxParkingSpots) : IParkingGarage
     }
     private int FindAvailableSpot(double requiredSpots)
     {
-        if (requiredSpots == 0.5)
+        if (requiredSpots == GlobalConstants.RequiredMotorcycleParkingSpots)
         {
             foreach (var spot in ParkingSpots)
             {
-                if (spot.Value.Count == 0 || spot.Value.Count == 1 && spot.Value[0].RequiredParkingSpots == 0.5)
+                double currentOccupancy = 0.0;
+                foreach (var vehicle in spot.Value)
+                {
+                    currentOccupancy += vehicle.RequiredParkingSpots;
+                }
+                if (currentOccupancy + requiredSpots <= 1.0)
                 {
                     return spot.Key;
                 }
             }
         }
-        else if (requiredSpots == 1.0)
+        else if (requiredSpots == GlobalConstants.RequiredCarParkingSpots)
         {
             foreach (var spot in ParkingSpots)
             {
@@ -72,7 +77,7 @@ internal class ParkingGarage(int maxParkingSpots) : IParkingGarage
                 }
             }
         }
-        else if (requiredSpots == 2.0)
+        else if (requiredSpots == GlobalConstants.RequiredBusParkingSpots)
         {
             for (int i = 1; i <= MaxParkingSpots - 1; i++)
             {
@@ -93,7 +98,7 @@ internal class ParkingGarage(int maxParkingSpots) : IParkingGarage
     }
     private void AssignVehicleToSpot(IVehicle newArrival, int spotNumber)
     {
-        if (newArrival.RequiredParkingSpots == 2.0)
+        if (newArrival.RequiredParkingSpots == GlobalConstants.RequiredBusParkingSpots)
         {
             ParkingSpots[spotNumber].Add(newArrival);
             ParkingSpots[spotNumber + 1].Add(newArrival);
@@ -103,6 +108,9 @@ internal class ParkingGarage(int maxParkingSpots) : IParkingGarage
             ParkingSpots[spotNumber].Add(newArrival);
         }
     }
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Performance", "CA1822:Mark members as static",
+        Justification = "This method access instance data for specific parking garages passed through CheckoutVehicle()")]
     private T? GetCheckoutObject<T>(string licenseNumber, List<T> objectList) where T : class
     {
         foreach (var item in objectList)

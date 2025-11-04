@@ -8,7 +8,12 @@ internal class VehicleArrivals
         ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
          'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 
-    private const int LICENSE_PLATE_LENGTH = 6;
+    private const int MinBusPassengerCount = 7;
+    private const int MaxBusPassengerCount = 60;
+
+    private const int MaxLicenseNumberLength = 6;
+    private const int MinLicenseNumberLetters = 3;
+
     private static int s_debugNumber;
 
     internal static IVehicle? GetNewVehicle()
@@ -21,7 +26,7 @@ internal class VehicleArrivals
         {
             case 0:
                 descriptionHeader = "En ny bil anländer till parkeringen.";
-                vehicle = new Car(GetRandomLicenseNumber(), GetColor(descriptionHeader), CheckIfElectricCar(descriptionHeader));
+                vehicle = new Car(GetRandomLicenseNumber(), GetColor(descriptionHeader), IsElectricCar(descriptionHeader));
                 break;
             case 1:
                 descriptionHeader = "En ny motorcykel anländer till parkeringen.";
@@ -29,7 +34,7 @@ internal class VehicleArrivals
                 break;
             case 2:
                 descriptionHeader = "En ny buss anländer till parkeringen.";
-                vehicle = new Bus(GetRandomLicenseNumber(), GetColor(descriptionHeader), GetNumberOfPassengers(descriptionHeader));
+                vehicle = new Bus(GetRandomLicenseNumber(), GetColor(descriptionHeader), GetPassengerCount(descriptionHeader));
                 break;
             default:
                 vehicle = null;
@@ -46,12 +51,7 @@ internal class VehicleArrivals
         }
         return vehicle;
     }
-    // make generic vehicle creation method?
-    private static int GetNumberOfPassengers(string descriptionHeader)
-    {
-        return TryConvertPassengerInput(descriptionHeader);
-    }
-    private static int TryConvertPassengerInput(string descriptionHeader)
+    private static int GetPassengerCount(string descriptionHeader)
     {
         int maxPassengersResult;
 
@@ -59,11 +59,11 @@ internal class VehicleArrivals
         {
             string maxPassengers = UserInput.GetUserInput("Hur många passagerare får plats i bussen? Minst 7 personer och max 60: ", descriptionHeader);
             bool passengerResult = int.TryParse(maxPassengers, out maxPassengersResult);
-            if (!passengerResult || maxPassengersResult < 7 || maxPassengersResult > 60)
+            if (!passengerResult || maxPassengersResult < MinBusPassengerCount || maxPassengersResult > MaxBusPassengerCount)
             {
                 Console.WriteLine();
                 Console.WriteLine("Var god mata in ett giltigt värde");
-                Thread.Sleep(2000);
+                Thread.Sleep(GlobalConstants.UserFeedbackDelay);
                 Console.Clear();
             }
             else
@@ -81,13 +81,11 @@ internal class VehicleArrivals
     {
         return UserInput.GetUserInput("Vad är det för märke? ", descriptionHeader);
     }
-    private static bool CheckIfElectricCar(string descriptionHeader)
+    private static bool IsElectricCar(string descriptionHeader)
     {
-        bool isElectric = false;
         ConsoleKeyInfo choice;
-        bool chosen = false;
 
-        while (!chosen)
+        while (true)
         {
             Console.Clear();
             Console.WriteLine(descriptionHeader);
@@ -99,32 +97,28 @@ internal class VehicleArrivals
             switch (choice.KeyChar)
             {
                 case 'y':
-                    isElectric = true;
-                    break;
+                    return true;
                 case 'n':
-                    isElectric = false;
-                    break;
+                    return false;
                 default:
                     Console.WriteLine();
                     Console.WriteLine("Var god välj Y eller N.");
-                    Thread.Sleep(2000);
+                    Thread.Sleep(GlobalConstants.UserFeedbackDelay);
                     Console.Clear();
                     continue;
             }
-            chosen = true;
         }
-        return isElectric;
     }
     private static string GetRandomLicenseNumber()
     {
-        Span<char> licenseNumber = stackalloc char[6];
+        Span<char> licenseNumber = stackalloc char[MaxLicenseNumberLength];
         bool lastSymbolIsLetter = Random.Shared.Next(2) == 0;
 
-        for (int i = 0; i < LICENSE_PLATE_LENGTH; i++)
+        for (int i = 0; i < MaxLicenseNumberLength; i++)
         {
-            if (i == LICENSE_PLATE_LENGTH - 1 && lastSymbolIsLetter || i < 3)
+            if (i < MinLicenseNumberLetters || (i == MaxLicenseNumberLength - 1 && lastSymbolIsLetter))
             {
-                licenseNumber[i] = s_licenseLetters[Random.Shared.Next(LICENSE_PLATE_LENGTH)];
+                licenseNumber[i] = s_licenseLetters[Random.Shared.Next(s_licenseLetters.Length)];
             }
             else
             {

@@ -28,14 +28,13 @@ internal class Info
                 string spotLabel = vehicle is Bus ? $"{spot.Key}-{spot.Key + 1}" : spot.Key.ToString();
 
                 parkedVehiclesMessage.Append($"Plats {spotLabel,-15}");
-                parkedVehiclesMessage.Append(vehicle switch
+                parkedVehiclesMessage.AppendLine(vehicle switch
                 {
                     Car car => $"Bil\t{car.LicenseNumber,-15}{car.Color,-15}{(car.IsElectric ? "Elbil" : "Fossil")}",
                     Motorcycle motorcycle => $"MC\t\t{motorcycle.LicenseNumber,-15}{motorcycle.Color,-15}{motorcycle.Brand}",
                     Bus bus => $"Buss\t{bus.LicenseNumber,-15}{bus.Color,-15}{bus.MaxPassengers}",
                     _ => $"Okänt fordon\t{vehicle.LicenseNumber,-15}{vehicle.Color}"
                 });
-                parkedVehiclesMessage.AppendLine();
             }
         }
         return parkedVehiclesMessage.ToString();
@@ -62,7 +61,7 @@ internal class Info
         }
         debugText.AppendLine();
         debugText.AppendLine($"Upptagna platser: {parkingGarage.OccupiedParkingSpots}");
-        Console.WriteLine(debugText.ToString());
+        Console.Write(debugText.ToString());
         Console.ReadKey(true);
     }
 }

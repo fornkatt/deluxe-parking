@@ -4,9 +4,8 @@ internal class Program
 {
     private static void Main()
     {
-        ParkingGarage parkingGarage = new(15);
-        Queue<IVehicle> vehicleQueue = [];
+        ParkingGarage parkingGarage = new(GlobalConstants.DefaultParkingCapacity);
 
-        Menu.PrintMainMenu(parkingGarage, vehicleQueue);
+        Menu.PrintMainMenu(parkingGarage);
     }
 }

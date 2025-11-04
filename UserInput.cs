@@ -13,17 +13,16 @@ internal class UserInput
             Console.WriteLine();
             Console.Write(prompt);
             input = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(input) || input.Length <= 0)
+            if (string.IsNullOrWhiteSpace(input))
             {
                 Console.WriteLine();
                 Console.WriteLine("Var god mata in ett värde.");
-                Thread.Sleep(2000);
+                Thread.Sleep(GlobalConstants.UserFeedbackDelay);
             }
             else
             {
-                break;
+                return input;
             }
         }
-        return input;
     }
 }

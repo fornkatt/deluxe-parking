@@ -2,7 +2,7 @@
 
 internal class Menu
 {
-    public static void PrintMainMenu(ParkingGarage parkingGarage, Queue<IVehicle> vehicleQueue)
+    public static void PrintMainMenu(ParkingGarage parkingGarage)
     {
         while (true)
         {
@@ -17,12 +17,12 @@ internal class Menu
 
                 """);
 
-            Console.WriteLine(Info.PrintParkedVehicles(parkingGarage.ParkingSpots));
+            Console.Write(Info.PrintParkedVehicles(parkingGarage.ParkingSpots));
 
-            GetUserChoice(parkingGarage);
+            GetUserMenuChoice(parkingGarage);
         }
     }
-    private static void GetUserChoice(ParkingGarage parkingGarage)
+    private static void GetUserMenuChoice(ParkingGarage parkingGarage)
     {
         ConsoleKeyInfo choice = Console.ReadKey(true);
         switch (choice.KeyChar)
@@ -30,7 +30,7 @@ internal class Menu
             case 'i':
                 Console.Clear();
                 parkingGarage.ParkVehicle();
-                Thread.Sleep(2000);
+                Thread.Sleep(GlobalConstants.UserFeedbackDelay);
                 break;
             case 'c':
                 Console.Clear();
@@ -44,12 +44,9 @@ internal class Menu
                 Info.PrintDebugMenu(parkingGarage);
                 break;
             default:
-                Console.WriteLine("""
-
-                    Var god mata in ett giltigt värde.
-
-                    """);
-                Thread.Sleep(5000);
+                Console.WriteLine();
+                Console.WriteLine("Var god mata in ett giltigt värde.");
+                Thread.Sleep(GlobalConstants.UserFeedbackDelay);
                 break;
         }
     }
