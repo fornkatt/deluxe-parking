@@ -6,7 +6,6 @@ internal class ParkingMeter(string licenseNumber) : IParkingMeter
     public int MinutesParked { get; set; }
     public double TotalParkingCost { get; set; }
     public string LicenseNumber { get; init; } = licenseNumber;
-    //public IVehicle Vehicle { get; init; } = vehicle;
     public DateTime ArrivalTime { get; init; } = DateTime.Now;
 
     public void CalculateTotalCost()
