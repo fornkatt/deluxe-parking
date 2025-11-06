@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-namespace DeluxeParking;
+﻿namespace DeluxeParking;
 
 internal class ParkingGarage(int maxParkingSpots) : IParkingGarage
 {
