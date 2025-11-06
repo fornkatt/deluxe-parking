@@ -68,7 +68,8 @@ internal class Info
         foreach (var meters in parkingGarage.ParkingMeters)
         {
             meters.CalculateTotalCost();
-            debugText.AppendLine($"{meters.Vehicle.GetType().Name,-15}{meters.LicenseNumber,-15}{meters.MinutesParked} min{meters.TotalParkingCost,15:0.0}kr");
+            debugText.AppendLine($"" +
+                $"{meters.LicenseNumber,-15}{meters.MinutesParked} min{meters.TotalParkingCost,15:0.0}kr");
         }
         debugText.AppendLine();
         debugText.AppendLine($"Upptagna platser: {parkingGarage.OccupiedParkingSpots}");

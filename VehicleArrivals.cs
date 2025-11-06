@@ -174,7 +174,7 @@ internal class VehicleArrivals
             Console.WriteLine(contextHeader);
             Console.WriteLine();
             Console.Write("Är bilen elektrisk? Y/n ");
-            choice = Console.ReadKey(true);
+            choice = Console.ReadKey();
             Console.WriteLine();
 
             switch (choice.KeyChar)

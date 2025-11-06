@@ -98,7 +98,7 @@ internal class ParkingGarage(int maxParkingSpots) : IParkingGarage
     {
         AssignVehicleToSpot(newArrival, spotNumber);
         ParkedVehicles.Add(newArrival);
-        ParkingMeters.Add(new ParkingMeter(newArrival, newArrival.LicenseNumber));
+        ParkingMeters.Add(new ParkingMeter(newArrival.LicenseNumber));
         OccupiedParkingSpots += newArrival.RequiredParkingSpots;
     }
     private void AssignVehicleToSpot(IVehicle newArrival, int spotNumber)
