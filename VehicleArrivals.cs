@@ -179,7 +179,7 @@ internal class VehicleArrivals
 
             switch (choice.KeyChar)
             {
-                case 'y' or 'y':
+                case 'y' or 'Y':
                     return true;
                 case 'n' or 'N':
                     return false;
