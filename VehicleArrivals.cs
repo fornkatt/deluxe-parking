@@ -179,9 +179,9 @@ internal class VehicleArrivals
 
             switch (choice.KeyChar)
             {
-                case 'y':
+                case 'y' or 'y':
                     return true;
-                case 'n':
+                case 'n' or 'N':
                     return false;
                 default:
                     Console.WriteLine();
