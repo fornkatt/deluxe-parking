@@ -8,5 +8,7 @@ internal static class GlobalConstants
     internal const double RequiredCarParkingSpots = 1.0;
     internal const double RequiredBusParkingSpots = 2.0;
 
+    internal const double DefaultParkingCostMinute = 1.5;
+
     internal const int DefaultParkingCapacity = 15;
 }

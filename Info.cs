@@ -30,10 +30,21 @@ internal class Info
                 parkedVehiclesMessage.Append($"Plats {spotLabel,-15}");
                 parkedVehiclesMessage.AppendLine(vehicle switch
                 {
-                    Car car => $"Bil\t{car.LicenseNumber,-15}{car.Color,-15}{(car.IsElectric ? "Elbil" : "Fossil")}",
-                    Motorcycle motorcycle => $"MC\t\t{motorcycle.LicenseNumber,-15}{motorcycle.Color,-15}{motorcycle.Brand}",
-                    Bus bus => $"Buss\t{bus.LicenseNumber,-15}{bus.Color,-15}{bus.MaxPassengers}",
-                    _ => $"Okänt fordon\t{vehicle.LicenseNumber,-15}{vehicle.Color}"
+                    Car car =>
+                        $"{car.Name,-15}{car.LicenseNumber,-15}" +
+                        $"{car.Color,-15}" +
+                        $"{(car.IsElectric ? "Elbil" : "Fossil")}",
+                    Motorcycle motorcycle =>
+                        $"{motorcycle.Name,-15}{motorcycle.LicenseNumber,-15}" +
+                        $"{motorcycle.Color,-15}" +
+                        $"{motorcycle.Brand}",
+                    Bus bus =>
+                        $"{bus.Name,-15}{bus.LicenseNumber,-15}" +
+                        $"{bus.Color,-15}" +
+                        $"{bus.MaxPassengers}",
+                    _ =>
+                        $"Okänt fordon\t{vehicle.LicenseNumber,-15}" +
+                        $"{vehicle.Color}"
                 });
             }
         }
@@ -57,7 +68,7 @@ internal class Info
         foreach (var meters in parkingGarage.ParkingMeters)
         {
             meters.CalculateTotalCost();
-            debugText.AppendLine($"{meters.LicenseNumber}: {meters.MinutesParked} minuter, {meters.TotalParkingCost}kr");
+            debugText.AppendLine($"{meters.Vehicle.GetType().Name,-15}{meters.LicenseNumber,-15}{meters.MinutesParked} min{meters.TotalParkingCost,15:0.0}kr");
         }
         debugText.AppendLine();
         debugText.AppendLine($"Upptagna platser: {parkingGarage.OccupiedParkingSpots}");

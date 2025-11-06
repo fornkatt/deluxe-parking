@@ -8,6 +8,6 @@ internal interface IParkingGarage
     List<IVehicle> ParkedVehicles { get; set; }
     SortedDictionary<int, List<IVehicle>> ParkingSpots { get; set; }
 
-    void ParkVehicle();
+    void ParkVehicle(IVehicle? newArrival);
     void CheckoutVehicle();
 }

@@ -2,7 +2,7 @@
 
 internal class ParkingMeter(IVehicle vehicle, string licenseNumber) : IParkingMeter
 {
-    public double CostPerMinute { get; init; } = 1.5;
+    public double CostPerMinute { get; } = GlobalConstants.DefaultParkingCostMinute;
     public int MinutesParked { get; set; }
     public double TotalParkingCost { get; set; }
     public string LicenseNumber { get; init; } = licenseNumber;

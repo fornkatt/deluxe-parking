@@ -1,4 +1,6 @@
-﻿namespace DeluxeParking;
+﻿using System.Runtime.InteropServices;
+
+namespace DeluxeParking;
 
 internal class ParkingGarage(int maxParkingSpots) : IParkingGarage
 {
@@ -8,11 +10,10 @@ internal class ParkingGarage(int maxParkingSpots) : IParkingGarage
     public List<IVehicle> ParkedVehicles { get; set; } = [];
     public SortedDictionary<int, List<IVehicle>> ParkingSpots { get; set; } = ParkingGarageHelpers.InitializeParkingSpots(maxParkingSpots);
 
-    public void ParkVehicle()
+    public void ParkVehicle(IVehicle? newArrival)
     {
-        IVehicle? newArrival = VehicleArrivals.GetNewVehicle();
-
-        if (newArrival == null || (OccupiedParkingSpots + newArrival.RequiredParkingSpots > MaxParkingSpots))
+        if (newArrival == null ||
+            (OccupiedParkingSpots + newArrival.RequiredParkingSpots > MaxParkingSpots))
         {
             Console.WriteLine();
             Console.WriteLine("Parkeringshuset kan inte ta emot detta fordon just nu.");
@@ -34,12 +35,16 @@ internal class ParkingGarage(int maxParkingSpots) : IParkingGarage
     }
     public void CheckoutVehicle()
     {
-        string licenseNumber = UserInput.GetUserInput("Ange registreringsnumret på fordonet du vill checka ut: ", Info.PrintParkedVehicles(ParkingSpots)).ToUpper();
+        string licenseNumber = UserInput.GetUserInput(
+            "Ange registreringsnumret på fordonet du vill checka ut: ",
+            Info.PrintParkedVehicles(ParkingSpots)
+            ).ToUpper();
 
         IVehicle? vehicleToCheckout = GetCheckoutObject(licenseNumber, ParkedVehicles);
         IParkingMeter? parkingMeterToCheckout = GetCheckoutObject(licenseNumber, ParkingMeters);
 
-        if (vehicleToCheckout == null || parkingMeterToCheckout == null)
+        if (vehicleToCheckout == null ||
+            parkingMeterToCheckout == null)
         {
             Console.WriteLine();
             Console.WriteLine("Fordonet hittades inte");
@@ -110,7 +115,7 @@ internal class ParkingGarage(int maxParkingSpots) : IParkingGarage
     }
     [System.Diagnostics.CodeAnalysis.SuppressMessage(
         "Performance", "CA1822:Mark members as static",
-        Justification = "This method access instance data for specific parking garages passed through CheckoutVehicle()")]
+        Justification = "This method accesses instance data for specific parking garages passed through CheckoutVehicle()")]
     private T? GetCheckoutObject<T>(string licenseNumber, List<T> objectList) where T : class
     {
         foreach (var item in objectList)

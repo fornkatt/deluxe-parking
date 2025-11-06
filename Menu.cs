@@ -29,7 +29,8 @@ internal class Menu
         {
             case 'i':
                 Console.Clear();
-                parkingGarage.ParkVehicle();
+                var newArrival = VehicleArrivals.GetNewVehicle();
+                parkingGarage.ParkVehicle(newArrival);
                 Thread.Sleep(GlobalConstants.UserFeedbackDelay);
                 break;
             case 'c':
