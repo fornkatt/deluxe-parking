@@ -69,15 +69,13 @@ internal class VehicleArrivals
     private const int MaxLicenseNumberLength = 6;
     private const int MinLicenseNumberLetters = 3;
 
-    private static int s_debugNumber;
-
     internal static IVehicle? GetNewVehicle()
     {
-        //int randomVehicle = Random.Shared.Next(3);
+        int randomVehicle = Random.Shared.Next(3);
         IVehicle? vehicle;
         string contextHeader;
 
-        switch (s_debugNumber)
+        switch (randomVehicle)
         {
             case 0:
                 contextHeader = "En ny bil anländer till parkeringen.";
@@ -106,15 +104,6 @@ internal class VehicleArrivals
             default:
                 vehicle = null;
                 break;
-        }
-
-        if (s_debugNumber == 2)
-        {
-            s_debugNumber = 0;
-        }
-        else
-        {
-            s_debugNumber++;
         }
         return vehicle;
     }
