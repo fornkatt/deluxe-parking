@@ -36,7 +36,7 @@ internal class ParkingGarage(int maxParkingSpots) : IParkingGarage
         string licenseNumber = UserInput.GetUserInput(
             "Ange registreringsnumret på fordonet du vill checka ut: ",
             Info.PrintParkedVehicles(ParkingSpots)
-            ).ToUpper();
+            ).ToUpper().Trim();
 
         IVehicle? vehicleToCheckout = GetCheckoutObject(licenseNumber, ParkedVehicles);
         IParkingMeter? parkingMeterToCheckout = GetCheckoutObject(licenseNumber, ParkingMeters);
